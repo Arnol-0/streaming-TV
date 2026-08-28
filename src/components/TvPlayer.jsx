@@ -78,7 +78,7 @@ const TvPlayer = () => {
               <img
                 key={media.id}
                 src={media.url}
-                className={`media-layer animate-fade-in ${isActive ? 'active' : ''}`}
+                className={`media-layer ${isActive ? 'active' : ''}`}
                 alt="stream content"
                 style={{ zIndex: isActive ? 5 : 1 }}
               />
