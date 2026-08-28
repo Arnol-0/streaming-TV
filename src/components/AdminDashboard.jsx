@@ -411,7 +411,7 @@ const AdminDashboard = () => {
       </aside>
 
       <main className="dashboard-content">
-        <h2>Contenido Multimedia ({mediaItems.length})</h2>
+        <h2 style={{ color: 'var(--primary)', marginBottom: '0.5rem' }}>Contenido Multimedia ({mediaItems.length})</h2>
         <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
           Administra las imágenes y videos. Arrastra archivos aquí para subirlos, y arrastra las tarjetas para reordenar la cola de visualización.
         </p>
