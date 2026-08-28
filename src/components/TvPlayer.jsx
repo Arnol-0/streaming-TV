@@ -62,6 +62,7 @@ const TvPlayer = () => {
                 className={`media-layer ${isActive ? 'active' : ''}`}
                 autoPlay={isActive}
                 muted={true} // Usually better for autoplay policies
+                loop={mediaItems.length === 1}
                 onEnded={isActive ? handleVideoEnded : undefined}
                 style={{ zIndex: isActive ? 5 : 1 }}
               />

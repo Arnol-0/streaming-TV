@@ -139,6 +139,14 @@ h1, h2, h3, h4 {
   animation: slideUp 0.5s ease-out forwards;
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
 /* App Layout */
 .app-container {
   width: 100vw;

@@ -20,6 +20,8 @@ import {
   orderBy, 
   writeBatch 
 } from 'firebase/firestore';
+import { ref, deleteObject } from 'firebase/storage';
+import { storage } from '../firebase';
 
 const MediaContext = createContext();
 
@@ -115,7 +117,15 @@ export const MediaProvider = ({ children }) => {
 
   const removeMedia = async (id) => {
     try {
+      const itemToDelete = mediaItems.find(item => item.id === id);
+      
       await deleteDoc(doc(db, 'media', id));
+
+      // Eliminar de Storage para no dejar archivos basura
+      if (itemToDelete && itemToDelete.name) {
+        const storageRef = ref(storage, `media/${itemToDelete.name}`);
+        await deleteObject(storageRef);
+      }
     } catch (error) {
       console.error("Error removing media:", error);
     }

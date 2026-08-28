@@ -20,6 +20,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { storage } from '../firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import toast from 'react-hot-toast';
 
 const SortableMediaCard = ({ media, onRemove }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: media.id });
@@ -233,7 +234,9 @@ const AdminDashboard = () => {
     const storageRef = ref(storage, `media/${fileName}`);
 
     const uploadTask = uploadBytesResumable(storageRef, file);
-
+    
+    // We can show a loading toast if needed, but we already have the UI progress
+    
     uploadTask.on('state_changed', 
       (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -241,11 +244,16 @@ const AdminDashboard = () => {
       }, 
       (error) => {
         console.error("Upload failed", error);
+        toast.error(`Error al subir ${type === 'video' ? 'el video' : 'la imagen'}`);
         setUploading(false);
       }, 
       async () => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         await addMediaToDB(downloadURL, type, fileName);
+        toast.success(`¡${type === 'video' ? 'Video' : 'Imagen'} subid${type === 'video' ? 'o' : 'a'} exitosamente!`, {
+          icon: '🎉',
+          duration: 3000
+        });
         setUploading(false);
         setUploadProgress(0);
       }
@@ -407,17 +415,28 @@ const AdminDashboard = () => {
           style={{ pointerEvents: uploading ? 'none' : 'auto', opacity: uploading ? 0.7 : 1 }}
         >
           {uploading ? (
-            <>
-              <Loader2 size={48} className="animate-spin" style={{ color: 'var(--primary)', margin: '0 auto 1rem auto' }} />
-              <h3 style={{ color: 'var(--text-main)' }}>Subiendo... {uploadProgress}%</h3>
-              <p style={{ color: 'var(--text-muted)' }}>Por favor espera a que finalice la subida</p>
-            </>
+            <div key="uploading-state" style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}>
+              <h3 style={{ color: 'var(--text-main)', marginBottom: '1rem' }}><span>Subiendo archivo...</span></h3>
+              
+              {/* Barra de progreso visual */}
+              <div style={{ width: '100%', height: '10px', background: 'rgba(0,0,0,0.1)', borderRadius: '10px', overflow: 'hidden', marginBottom: '1rem' }}>
+                <div style={{ 
+                  width: `${uploadProgress}%`, 
+                  height: '100%', 
+                  background: 'linear-gradient(90deg, var(--primary), var(--secondary))', 
+                  transition: 'width 0.2s ease',
+                  borderRadius: '10px'
+                }}></div>
+              </div>
+              
+              <p style={{ color: 'var(--text-muted)' }}><span>Por favor espera a que finalice la subida</span></p>
+            </div>
           ) : (
-            <>
+            <div key="idle-state">
               <ImagePlus size={48} style={{ color: isDragOver ? 'var(--primary)' : 'var(--text-muted)', margin: '0 auto 1rem auto' }} />
-              <h3 style={{ color: 'var(--text-main)' }}>Arrastra fotos y videos aquí</h3>
-              <p style={{ color: 'var(--text-muted)' }}>O haz clic para seleccionar archivos desde tu computadora</p>
-            </>
+              <h3 style={{ color: 'var(--text-main)' }}><span>Arrastra fotos y videos aquí</span></h3>
+              <p style={{ color: 'var(--text-muted)' }}><span>O haz clic para seleccionar archivos desde tu computadora</span></p>
+            </div>
           )}
         </div>
 
