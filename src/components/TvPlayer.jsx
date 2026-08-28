@@ -11,21 +11,27 @@ const TvPlayer = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!mediaItems || mediaItems.length === 0) return;
+    if (mediaItems.length === 0) return;
 
     const currentMedia = mediaItems[currentIndex];
-    let timer;
-
-    if (currentMedia.type === 'image') {
-      // Advance to next after duration
-      timer = setTimeout(() => {
+    
+    if (currentMedia?.type === 'image') {
+      const timer = setTimeout(() => {
         setCurrentIndex((prev) => (prev + 1) % mediaItems.length);
-      }, currentMedia.duration || 5000);
-    }
+      }, 10000); // 10 segundos por imagen
+      
+      return () => clearTimeout(timer);
+    } else if (currentMedia?.type === 'video') {
+      // Forzar la reproducción del video
+      const playTimer = setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.currentTime = 0;
+          videoRef.current.play().catch(e => console.error("Error al reproducir video:", e));
+        }
+      }, 50); // Pequeño delay para que React monte el ref
 
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
+      return () => clearTimeout(playTimer);
+    }
   }, [currentIndex, mediaItems]);
 
   const handleVideoEnded = () => {

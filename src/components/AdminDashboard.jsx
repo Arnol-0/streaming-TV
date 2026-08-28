@@ -343,9 +343,19 @@ const AdminDashboard = () => {
           type="file" 
           ref={fileInputRef}
           style={{ display: 'none' }}
-          onChange={handleFileChange}
-          accept="image/*,video/*"
-          multiple
+          accept="video/*,image/*"
+          onChange={(e) => {
+            if (e.target.files && e.target.files.length > 0) {
+              const file = e.target.files[0];
+              if (file.type.startsWith('video/')) {
+                uploadFileToFirebase(file, 'video');
+              } else if (file.type.startsWith('image/')) {
+                uploadFileToFirebase(file, 'image');
+              } else {
+                toast.error("Solo se permiten archivos de video e imagen.");
+              }
+            }
+          }}
         />
 
         <button 
