@@ -208,21 +208,104 @@ h1, h2, h3, h4 {
 }
 
 .sidebar {
-  width: 300px;
+  width: 80px;
   height: 100%;
-  padding: 2rem;
+  padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   border-right: 1px solid var(--glass-border);
   background: var(--bg-card);
   box-shadow: 2px 0 10px rgba(0,0,0,0.02);
+  transition: width 0.3s ease, padding 0.3s ease;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+.sidebar.expanded {
+  width: 300px;
+  padding: 2rem;
 }
 
 .sidebar .btn {
   justify-content: flex-start;
+  padding: 12px;
+  font-weight: 500;
+  border-radius: 8px;
+  min-width: 44px;
+}
+
+.sidebar .btn svg {
+  flex-shrink: 0;
+  min-width: 20px;
+  min-height: 20px;
+}
+
+/* Linear/Clean Button Style for Sidebar */
+.btn-sidebar {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--glass-border);
+  box-shadow: none;
+}
+
+.btn-sidebar:hover {
+  background: rgba(30, 86, 49, 0.05); /* Light green tint */
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.sidebar.expanded .btn {
   padding: 12px 16px;
-  font-weight: 600;
+}
+
+.sidebar-text {
+  opacity: 0;
+  max-width: 0;
+  margin-left: 0;
+  transition: all 0.3s ease;
+  display: inline-block;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sidebar.expanded .sidebar-text {
+  opacity: 1;
+  max-width: 200px;
+  margin-left: 12px;
+  pointer-events: auto;
+}
+
+.sidebar-header {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  margin-bottom: 2rem;
+}
+
+.sidebar.expanded .sidebar-header {
+  opacity: 1;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.sidebar.expanded .sidebar-toggle {
+  left: calc(100% - 2rem);
+  transform: translateX(-100%);
 }
 
 /* User Profile & Dropdown Section */
@@ -232,12 +315,18 @@ h1, h2, h3, h4 {
   background: #f8fafc;
   border: 1px solid var(--glass-border);
   border-radius: 12px;
-  padding: 12px;
+  padding: 12px 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+}
+
+.sidebar.expanded .profile-section {
+  padding: 12px;
+  justify-content: flex-start;
 }
 
 .profile-section:hover {
@@ -245,6 +334,7 @@ h1, h2, h3, h4 {
 }
 
 .profile-avatar {
+  min-width: 40px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -260,6 +350,14 @@ h1, h2, h3, h4 {
 .profile-info {
   flex: 1;
   overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: none;
+}
+
+.sidebar.expanded .profile-info {
+  opacity: 1;
+  display: block;
 }
 
 .profile-name {
@@ -273,6 +371,16 @@ h1, h2, h3, h4 {
 .profile-role {
   font-size: 0.8rem;
   color: var(--text-muted);
+}
+
+.profile-chevron {
+  opacity: 0;
+  display: none;
+}
+
+.sidebar.expanded .profile-chevron {
+  opacity: 1;
+  display: block;
 }
 
 .profile-dropdown {

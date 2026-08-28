@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { useMedia } from '../context/MediaContext';
 import { useNavigate, Navigate } from 'react-router-dom';
-import { Upload, Trash2, LogOut, MonitorPlay, GripVertical, ImagePlus, Loader2, UserPlus, X, KeyRound, ChevronUp } from 'lucide-react';
+import { Upload, Trash2, LogOut, MonitorPlay, GripVertical, ImagePlus, Loader2, UserPlus, X, KeyRound, ChevronUp, Menu } from 'lucide-react';
 import { 
   DndContext, 
   closestCenter, 
@@ -205,6 +205,7 @@ const AdminDashboard = () => {
   const [showCreateUser, setShowCreateUser] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -322,8 +323,19 @@ const AdminDashboard = () => {
         <ChangePasswordModal onClose={() => setShowChangePassword(false)} onChangePassword={changeUserPassword} />
       )}
 
-      <aside className="sidebar">
-        <div>
+      <aside 
+        className={`sidebar ${isSidebarExpanded ? 'expanded' : ''}`}
+        onMouseEnter={() => setIsSidebarExpanded(true)}
+        onMouseLeave={() => {
+          setIsSidebarExpanded(false);
+          setDropdownOpen(false); // Close dropdown if left open
+        }}
+      >
+        <button className="sidebar-toggle" onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}>
+          <Menu size={24} />
+        </button>
+
+        <div className="sidebar-header">
           <h2 style={{ color: 'var(--primary)', marginBottom: '0.2rem' }}>
             Hola, {displayName}
           </h2>
@@ -331,13 +343,13 @@ const AdminDashboard = () => {
         </div>
         
         <button 
-          className="btn btn-primary" 
+          className="btn btn-sidebar" 
           onClick={() => fileInputRef.current?.click()}
           style={{ width: '100%' }}
           disabled={uploading}
         >
           <Upload size={20} />
-          Subir Archivos
+          <span className="sidebar-text">Subir Archivos</span>
         </button>
         <input 
           type="file" 
@@ -359,30 +371,33 @@ const AdminDashboard = () => {
         />
 
         <button 
-          className="btn btn-ghost" 
+          className="btn btn-sidebar" 
           onClick={() => setShowCreateUser(true)}
-          style={{ width: '100%', justifyContent: 'flex-start' }}
+          style={{ width: '100%' }}
         >
           <UserPlus size={20} />
-          Crear Usuario
+          <span className="sidebar-text">Crear Usuario</span>
         </button>
 
         <button 
-          className="btn btn-ghost" 
+          className="btn btn-sidebar" 
           onClick={() => navigate('/')}
-          style={{ width: '100%', justifyContent: 'flex-start' }}
+          style={{ width: '100%' }}
         >
           <MonitorPlay size={20} />
-          Ver TV Stream
+          <span className="sidebar-text">Ver TV Stream</span>
         </button>
 
-        <div className="profile-section" ref={dropdownRef} onClick={() => setDropdownOpen(!dropdownOpen)}>
+        <div className="profile-section" ref={dropdownRef} onClick={() => {
+          if (!isSidebarExpanded) setIsSidebarExpanded(true);
+          else setDropdownOpen(!dropdownOpen);
+        }}>
           <div className="profile-avatar">{initial}</div>
           <div className="profile-info">
             <div className="profile-name">{displayName}</div>
             <div className="profile-role">Administrador</div>
           </div>
-          <ChevronUp size={20} style={{ color: 'var(--text-muted)', transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+          <ChevronUp className="profile-chevron" size={20} style={{ color: 'var(--text-muted)', transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
           
           <div className={`profile-dropdown ${dropdownOpen ? 'show' : ''}`}>
             <button 
